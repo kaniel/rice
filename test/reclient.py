@@ -1,6 +1,7 @@
 # -*- coding:utf-8 -*-
 from ws4py.client.threadedclient import WebSocketClient
 import threading
+import ws4py.messaging
 import time
 import json
 
@@ -12,6 +13,7 @@ send_url2 = '''{'event':'addChannel','channel':'ok_sub_spot_btc_usdt_kline_1min'
 
 class EchoClient(WebSocketClient):
     riceSys = None
+
     def opened(self):
         self.send(send_url)
 
@@ -20,14 +22,13 @@ class EchoClient(WebSocketClient):
 
     def closed(self, code, reason=None):
         print "Closed down", code, reason
-        self.connect()
-        print "reconnect..."
-        self.run_forever()
+        self.riceSys.reconnection()
 
     def received_message(self, m):
         print type(m), m
         if hasattr(m, "data"):
-            print m.data
+            print type(m.data)
+            self.riceSys.covert_feeds(m.data)
         # self.close()
         # receive_data = json.loads(m)
         if hasattr(m, "event"):
@@ -40,8 +41,7 @@ class EchoClient(WebSocketClient):
                 self.riceSys.__ws.run_forever()
 
 
-
-class Coin():
+class Coin:
     def __init__(self):
         print "init Coin"
         self.__ws = EchoClient(wss_url)
@@ -62,6 +62,10 @@ class Coin():
         except KeyboardInterrupt:
             self.__ws.close()
 
+    def reconnection(self):
+        self.__ws.connect()
+        self.__ws.run_forever()
+
     def test_show(self):
         szTest = ""
         while szTest != "/exit":
@@ -79,6 +83,45 @@ class Coin():
     #         except KeyboardInterrupt:
     #             self.__ws.connect()
     #             self.__ws.run_forever()
+
+    def covert_feeds(self, data):
+        feed = json.loads(data)[0]
+        print "name:", feed["channel"]
+        channel = feed["channel"].split("_")
+        if channel[-1] == "ticker":
+            coin_name = channel[-3:-1]
+            print coin_name, ":".join(channel[-3:])
+            self.set_feeds(":".join(channel[-3:]), feed["data"])
+        elif channel[-1] == "depth":
+            coin_name = channel[-3:-1]
+            print coin_name
+            self.set_feeds(":".join(channel[-3:]), feed["data"])
+        elif channel[-1] == "deals":
+            coin_name = channel[-3:-1]
+            print coin_name
+            self.set_feeds(":".join(channel[-3:]), feed["data"])
+        elif channel[-1] == "10" or channel[-1] == "20" or channel[-1] == "20":
+            coin_name = channel[-4:-2]
+            print coin_name
+            self.set_feeds(":".join(channel[-4:]), feed["data"])
+        #1min, 3min, 5min, 15min, 30min, 1hour, 2hour, 4hour, 6hour, 12hour, day, 3day, week
+        elif channel[-1] == "1min" or channel[-1] == "3min":
+            coin_name = channel[-4:-2]
+            print coin_name
+            self.set_feeds(":".join(channel[-4:]), feed["data"])
+
+    def set_feeds(self, title, data):
+        print "redis", title, data
+
+    def get_feeds(self, title):
+        print "title"
+
+    #ltc_btc eth_btc etc_btc bch_btc btc_usdt eth_usdt ltc_usdt etc_usdt
+    # bch_usdt etc_eth bt1_btc bt2_btc btg_btc qtum_btc hsr_btc neo_btc
+    # gas_btc qtum_usdt hsr_usdt neo_usdt gas_usdt
+    def covert_btc_usdt(self, data):
+        print "data:", data
+
 
 
 

@@ -154,7 +154,7 @@ data_dict["close"] = numpy.array(close_s, dtype='float')
 data_dict["volume"] = numpy.array(scale, dtype='float')
 print "data_dict:", data_dict
 
-print type(close), close
+print type(close), type(close[0]), close[0], close
 closed = numpy.array(close, dtype='float')
 print "clolsed array:", type(closed), closed
 # s_data = Series(close, index=["time", "open", "high", "low", "close", "scale"])
@@ -163,24 +163,29 @@ ds = DataFrame(data_dict, columns=["time", "open", "high", "low", "close", "volu
 print "date_frmae:", type(ds), ds
 print "close:", ds.close
 # neo_btc
-input_data = numpy.array(data_dict["close"], dtype='float')
+input_data = numpy.asarray(data_dict["close"], dtype='float')
 print type(input_data), type(input_data[0]), input_data[0], input_data
-upper, middle, lower = talib.BBANDS(input_data, timeperiod=20, nbdevup=2, nbdevdn=2, matype=0)
+
+close_m = numpy.random.random(30)
+close_b = list(close_m)
+close_c = numpy.array(close_b, dtype='float')
+
+upper, middle, lower = talib.BBANDS(closed, timeperiod=5, nbdevup=2, nbdevdn=2, matype=0)
 # upper, middle, lower = talib.BBANDS(closed, matype=talib.MA_Type.T3)
 print "1", "-" * 30
 print "upper:", upper
 print "middle:", middle
 print "lower:", lower
 
-close_m = numpy.random.random(30)
+close_m = [1, 3, 4, 2, 3, 5, 7, 9, 8, 5, 7, 10, 11, 12, 12, 13, 11, 10, 11, 12.5, 12]
 print type(close_m), type(close_m[0]), close_m[0], close_m
 close_b = list(close_m)
 print type(close_b), close_b
-close_c = numpy.array(close_b, dtype='float')
+close_c = numpy.array(close_m, dtype='float')
 print type(close_c), close_c
-print "sma:", talib.SMA(close_m)
+# print "sma:", talib.SMA(close_m)
 # upper, middle, lower = talib.BBANDS(close_m, matype=talib.MA_Type.T3)
-upper, middle, lower = talib.BBANDS(close_m, timeperiod=20, nbdevup=2, nbdevdn=2, matype=0)
+upper, middle, lower = talib.BBANDS(close_c, timeperiod=5, nbdevup=2, nbdevdn=2, matype=0)
 print "2", "-" * 30
 print "upper:", upper
 print "middle:", middle

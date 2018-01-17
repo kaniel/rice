@@ -84,8 +84,7 @@ class Coin:
     #             self.__ws.connect()
     #             self.__ws.run_forever()
 
-    def covert_feeds(self, data):
-        feed = json.loads(data)[0]
+    def covert_feeds(self, data)0 = json.loads(data)[0]
         print "name:", feed["channel"]
         channel = feed["channel"].split("_")
         if channel[-1] == "ticker":

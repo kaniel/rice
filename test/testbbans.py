@@ -40,12 +40,19 @@ data_1 = ["1516176180000","0.01162727","0.01162727","0.01162726","0.01162726","1
 print time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(int(data_1[0])/1000))
 # close.append(float(data_1[4]))
 # s_data.append(float(data_1[4]))
-d_time.append(float(data_1[0]))
-open.append(float(data_1[1]))
-high.append(float(data_1[2]))
-low.append(float(data_1[3]))
-close_s.append(float(data_1[4]))
-scale.append(float(data_1[5]))
+# d_time.append(float(data_1[0]))
+# open.append(float(data_1[1]))
+# high.append(float(data_1[2]))
+# low.append(float(data_1[3]))
+# close_s.append(float(data_1[4]))
+# scale.append(float(data_1[5]))
+row = dict()
+row["time"] = data_1[0]
+row["open"] = data_1[1]
+row["high"] = data_1[2]
+row["low"] = data_1[3]
+row["close"] = data_1[4]
+row["volume"] = data_1[5]
 
 # data_2 = ["1516086600000","0.01372999","0.01372999","0.01372999","0.01372999","8.92727964"]
 # print time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(int(data_1[0])/1000))
@@ -69,24 +76,30 @@ scale.append(float(data_1[5]))
 # close_s.append(float(data_3[4]))
 # scale.append(float(data_3[5]))
 
-close_d = [x * 10 for x in close_s]
-print close_d[0]
+# close_d = [x * 10 for x in close_s]
+# print close_d[0]
 
 data_dict = dict()
 data_dict["time"] = numpy.array(d_time, dtype='float')
 data_dict["open"] = numpy.array(open, dtype='float')
 data_dict["high"] = numpy.array(high, dtype='float')
 data_dict["low"] = numpy.array(low, dtype='float')
-data_dict["close"] = numpy.array(close_d, dtype='float')
+data_dict["close"] = numpy.array(close_s, dtype='float')
 data_dict["volume"] = numpy.array(scale, dtype='float')
 print "data_dict:", data_dict
 
 ds = DataFrame(data_dict, columns=["time", "open", "high", "low", "close", "volume"])
 print "date_frmae:", type(ds), ds
-print "close:", ds.close
+# print "close:", ds.close
 
-
-input_data = numpy.array(data_dict["close"], dtype='float')
+column = ["time", "open", "high", "low", "close", "volume"]
+insert_row = DataFrame([data_1], columns=column)
+ds = ds.append(row, ignore_index=True)
+print len(ds), ds
+print type(ds["close"]), ds["close"][20], "\n", ds["close"]
+test_data = [float(ds["close"][x]) * 10 for x in xrange(len(ds["close"]))]
+print "test close:", len(test_data), test_data
+input_data = numpy.array(test_data, dtype='float')
 print type(input_data), type(input_data[0]), input_data[0], input_data
 # upper, middle, lower = talib.BBANDS(input_data, timeperiod=5, nbdevup=2, nbdevdn=2, matype=0)
 upper, middle, lower = talib.BBANDS(input_data, timeperiod=20, nbdevup=2, nbdevdn=2, matype=0)
@@ -94,6 +107,7 @@ upper, middle, lower = talib.BBANDS(input_data, timeperiod=20, nbdevup=2, nbdevd
 # upper = [item for item in upper if numpy.isnan(item) else item]
 upper = [item if numpy.isnan(item) else item / 10 for item in upper]
 middle = [item if numpy.isnan(item) else item / 10 for item in middle]
+# format(item / 10, ".6f")
 lower = [item if numpy.isnan(item) else format(item / 10, ".6f") for item in lower]
 print "1", "-" * 30
 print "upper:", type(upper), upper

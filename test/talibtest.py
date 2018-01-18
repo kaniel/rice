@@ -111,17 +111,68 @@ for item in k_data:
         # s_data.append(float(item[4]))
     else:
         print "not list"
+data_dict = dict()
+data_dict["time"] = numpy.array(d_time, dtype='float')
+data_dict["open"] = numpy.array(open, dtype='float')
+data_dict["high"] = numpy.array(high, dtype='float')
+data_dict["low"] = numpy.array(low, dtype='float')
+data_dict["close"] = numpy.array(close_s, dtype='float')
+data_dict["volume"] = numpy.array(scale, dtype='float')
+# print "data_dict:", data_dict
+
+ds = DataFrame(data_dict, columns=["time", "open", "high", "low", "close", "volume"])
+print "date_frame:", type(ds), ds
+print "date_frame_time:", time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(int(ds.time[0])/1000))
+
 print "-" * 30
-data_1 = ["1516086600000", "0.01375051", "0.01375051", "0.01375051", "0.01375051", "0"]
-print time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(int(data_1[0])/1000))
+data_1 = ["1516086600000", "0.01375051", "0.01375051", "0.01375051", "0.01375051", "9"]
+print "data_1:", time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(int(data_1[0])/1000))
 close.append(float(data_1[4]))
+ds.append(data_1)
 # s_data.append(float(data_1[4]))
-d_time.append(float(data_1[0]))
-open.append(float(data_1[1]))
-high.append(float(data_1[2]))
-low.append(float(data_1[3]))
-close_s.append(float(data_1[4]))
-scale.append(float(data_1[5]))
+# ds.time.append(float(data_1[0]))
+# ds.open.append(float(data_1[1]))
+# ds.high.append(float(data_1[2]))
+# ds.low.append(float(data_1[3]))
+# ds.close.append(float(data_1[4]))
+# ds.volume.append(float(data_1[5]))
+row = dict()
+row["time"] = data_1[0]
+row["open"] = data_1[1]
+row["high"] = data_1[2]
+row["low"] = data_1[3]
+row["close"] = data_1[4]
+row["volume"] = data_1[5]
+# ds["kk"] = 2
+# print "add:", ds
+# del ds["kk"]
+print ds
+# 行：axis=0 ，列：axis=1, 只删除视图
+# print ds.drop([0, 1], axis=0)
+# d_time.append(float(data_1[0]))
+# open.append(float(data_1[1]))
+# high.append(float(data_1[2]))
+# low.append(float(data_1[3]))
+# close_s.append(float(data_1[4]))
+# scale.append(float(data_1[5]))
+# ds["volume"][2] = 1
+# ds[:1] = 6
+ds[0] = Series(data_1)
+# ds[0] = Series([1,])
+# print "end:", ds.loc[16]
+# ds.append(row, ignore_index=True)
+print "length:", len(ds)
+column = ["time", "open", "high", "low", "close", "volume"]
+# ds.insert(loc=len(ds), column=column, value=data_1, allow_duplicates=False)
+print "row:", type(row), row
+print "data_1:", data_1
+insert_row = DataFrame([data_1], columns=column)
+ds_s = ds.append(row, ignore_index=True)
+# print "end:", ds[2:3]
+# print "end1:", len(ds), ds
+print "end0:", len(ds_s), ds_s
+print "time::", time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(int(ds_s["time"][19])/1000))
+print "time::", time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(int(ds_s["time"][20])/1000))
 
 data_2 = ["1516086600000","0.01372999","0.01372999","0.01372999","0.01372999","8.92727964"]
 print time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(int(data_1[0])/1000))
@@ -145,22 +196,13 @@ low.append(float(data_3[3]))
 close_s.append(float(data_3[4]))
 scale.append(float(data_3[5]))
 
-data_dict = dict()
-data_dict["time"] = numpy.array(d_time, dtype='float')
-data_dict["open"] = numpy.array(open, dtype='float')
-data_dict["high"] = numpy.array(high, dtype='float')
-data_dict["low"] = numpy.array(low, dtype='float')
-data_dict["close"] = numpy.array(close_s, dtype='float')
-data_dict["volume"] = numpy.array(scale, dtype='float')
-print "data_dict:", data_dict
+
 
 print type(close), type(close[0]), close[0], close
 closed = numpy.array(close, dtype='float')
 print "clolsed array:", type(closed), closed
 # s_data = Series(close, index=["time", "open", "high", "low", "close", "scale"])
 # print "series:", s_data
-ds = DataFrame(data_dict, columns=["time", "open", "high", "low", "close", "volume"])
-print "date_frmae:", type(ds), ds
 print "close:", ds.close
 # neo_btc
 input_data = numpy.asarray(data_dict["close"], dtype='float')
@@ -177,16 +219,17 @@ print "upper:", upper
 print "middle:", middle
 print "lower:", lower
 
-close_m = [1, 3, 4, 2, 3, 5, 7, 9, 8, 5, 7, 10, 11, 12, 12, 13, 11, 10, 11, 12.5, 12]
-print type(close_m), type(close_m[0]), close_m[0], close_m
-close_b = list(close_m)
-print type(close_b), close_b
-close_c = numpy.array(close_m, dtype='float')
-print type(close_c), close_c
-# print "sma:", talib.SMA(close_m)
-# upper, middle, lower = talib.BBANDS(close_m, matype=talib.MA_Type.T3)
-upper, middle, lower = talib.BBANDS(close_c, timeperiod=5, nbdevup=2, nbdevdn=2, matype=0)
-print "2", "-" * 30
-print "upper:", upper
-print "middle:", middle
-print "lower:", lower
+# close_m = [1, 3, 4, 2, 3, 5, 7, 9, 8, 5, 7, 10, 11, 12, 12, 13, 11, 10, 11, 12.5, 12]
+# print type(close_m), type(close_m[0]), close_m[0], close_m
+# close_b = list(close_m)
+# print type(close_b), close_b
+# close_c = numpy.array(close_m, dtype='float')
+# print type(close_c), close_c
+# # print "sma:", talib.SMA(close_m)
+# # upper, middle, lower = talib.BBANDS(close_m, matype=talib.MA_Type.T3)
+# upper, middle, lower = talib.BBANDS(close_c, timeperiod=5, nbdevup=2, nbdevdn=2, matype=0)
+# print "2", "-" * 30
+# print "upper:", upper
+# print "middle:", middle
+# print "lower:", lower
+# print ds_s

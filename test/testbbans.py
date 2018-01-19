@@ -108,8 +108,50 @@ upper, middle, lower = talib.BBANDS(input_data, timeperiod=20, nbdevup=2, nbdevd
 upper = [item if numpy.isnan(item) else item / 10 for item in upper]
 middle = [item if numpy.isnan(item) else item / 10 for item in middle]
 # format(item / 10, ".6f")
-lower = [item if numpy.isnan(item) else format(item / 10, ".6f") for item in lower]
+lower = [item if numpy.isnan(item) else float(format(item / 10, ".6f")) for item in lower]
 print "1", "-" * 30
 print "upper:", type(upper), upper
 print "middle:", middle
 print "lower:", lower
+
+now_time = data_1[0]
+now_high = data_1[1]
+now_open = data_1[2]
+now_low = data_1[3]
+now_close = data_1[4]
+now_volume = data_1[5]
+
+# 1: 全下轨
+# 2:阳-上穿下轨, 3:阳-下轨道, 4:阳-上穿中轨, 5:阳-上轨道, 6:阳-上穿上轨,
+# 7: 全上轨
+# 8:阴-下穿上轨, 9:阴-上轨道, 10:阴-下穿中轨, 11:阴-下轨道,12:阴-下穿下轨
+status_now = 0
+status_way = []
+if now_open and now_close:
+    if now_open < now_close:
+        if now_open <= lower[-1] < now_close < middle[-1] \
+                or now_open < lower[-1] <= now_close < middle[-1]:
+            status_now = 2
+        elif lower[-1] < now_open <= now_close < middle[-1]:
+            status_now = 3
+        elif lower[-1] < now_open <= middle[-1] < now_close < upper[-1] \
+                or lower[-1] < now_open < middle[-1] <= now_close < upper[-1]:
+            status_now = 4
+        elif middle[-1] < now_open <= now_close < upper[-1]:
+            status_now = 5
+        elif middle[-1] < now_open <= upper[-1] < now_close \
+                or middle[-1] < now_open < upper[-1] <= now_close:
+            status_now = 6
+        else:
+            print "Wrong status!!"
+    elif now_open > now_close:
+        if
+        print ""
+    elif now_open == now_close:
+        if now_open < lower[-1]:
+            print "low"
+        print ""
+else:
+    print "Invalid value!"
+
+

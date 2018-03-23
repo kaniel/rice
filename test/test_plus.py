@@ -5,7 +5,7 @@ import os
 def getPlus(a, b):
 
     k1 = len(str(a))
-    s1= str(a)
+    s1 = str(a)
     k2 = len(str(b))
     s2 = str(b)
     print k1, type(s1), s1, "  |--|  ",  k2, type(s2), s2
@@ -25,6 +25,9 @@ def getPlus(a, b):
 
     print len(p), p
     for x in range(len(p)):
+        if x == len(p) - 1:
+            p[x] = str(p[x])
+            continue
         if p[x] / 10 == 0:
             p[x] = str(p[x])
             print x, type(p[x]), p[x]
@@ -33,14 +36,15 @@ def getPlus(a, b):
             m = p[x] / 10
             p[x + 1] += m
             p[x] = str(p[x] % 10)
-    end = "".join(p[::-1])
-    print len(end), end
+    res = "".join(p[::-1])
+    print len(res), res
+    return res
 
 
-if __name__=="__main__":
+if __name__ == "__main__":
     t = list([1, 2, 3])
-    # print t.ma
+    print max(t), min(t)
     print t
-    # print t[3]
-    print type(str(type(20 % 10))), 20 % 10
-    getPlus(str(180890890909089090890890890678723451231231231231239879780789789789808704234234234223423432432423423423423423423423545463423123)*1000, str(123451231234234234234234231231231230808908790879079089079089078907890789087907890789012322342342342342352343243242342342342342342342342342342343241))
+    print type(20 % 10), 20 % 10
+    res = getPlus(str(999999999999999999999999), str(9996646168496898169999999))
+    print "res:", type(res), res
